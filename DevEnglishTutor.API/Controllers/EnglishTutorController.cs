@@ -20,13 +20,13 @@ public class EnglishTutorController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> Get(string text, [FromServices] IConfiguration configuration)
     {
-        var token = configuration.GetValue<string>("ChatPgtSecretKey");
+        var token = configuration.GetValue<string>("token");
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var model = new ChatGptInputModel(text);
         var requestBody = JsonSerializer.Serialize(model);
         var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
-        var response = await _httpClient.PostAsync("https://api.openia.com/v1/completions", content);
+        var response = await _httpClient.PostAsync("https://api.openai.com/v1/completions/", content);
 
         var result = await response.Content.ReadFromJsonAsync<ChatGptViewModel>();
         var promptResponse = result.choices.First();
